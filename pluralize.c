@@ -1,94 +1,69 @@
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-bool check_ending(char *word, int len)
-{
-    char *temp = word; 
-    printf("temp: %s\n", temp);
-    printf("word: %s\n", word);
+bool check_ending(char ptr[], int len) {
+    
+    /* get the last two chars */
+    char *ending = &ptr[len - 1];
+    char *next = &ptr[len - 2];
 
-    const char *ending = &temp[len - 1];
-    const char *next = strtok(temp, ending);
-    printf("ending: %s\n", ending);
-    printf("next: %s\n", next);
-
-
-    /* vowels */
-    const char* a = "a";
-    const char* e = "e";
-    const char* o = "o";
-    const char* u = "u";
-
-    /* sh/ch endings */
-    const char *h = "h";
-    const char *es = "es";
-
-    /* y endings */
-    const char *y = "y";
-    const char *ies = "ies";
-
-    if (strcmp(ending, h) == 0)
-    {
-        word = strncat(word, es, 2);
-        return true;
-    }
-    else if (strcmp(ending, y) == 0)
-    {
-        if ((strcmp(next, a) == 0) || (strcmp(next, e) == 0) || (strcmp(next, o) == 0) || (strcmp(next, u) == 0)) 
-        {
+    if(strcmp("y", ending) == 0) {  /* looking at Y */
+        if (strcmp("ay", next) == 0) {
+            return true;
+        } else if (strcmp("ey", next) == 0) {
+            return true;
+        } else if (strcmp("oy", next) == 0) {
+            return true;
+        } else if (strcmp("uy", next) == 0) {
+            return true;
+        } else if (strcmp("ly", next) == 0) {  /* when its LY */
+            strtok(ptr, &ptr[len - 1]);
+            strcat(ptr, "ies");
             return false;
         }
-        else
-        {
-            char *tok = strtok(word, y);
-            strncat(tok, ies, 3);
-            printf("tok: %s\n", tok);
-            return true;
-        }
+    } else if (strcmp("h", ending) == 0) {  /* looking at H */
+        strcat(ptr, "es");
+        return false;
+    } else if (strcmp("us", next) == 0) {  /* looking at US */
+        strtok(ptr, next);
+        strcat(ptr, "i");
+        return false;
+    } else if (strcmp("fe", next) == 0) {  /* looking at FE */
+        strtok(ptr, next);
+        strcat(ptr, "ves");
+        return false;
+    } else if (strcmp("s", ending) == 0) {
+        return false;
     }
 
-    char *ife = "ife";
-
-    char *us = "us";
-
-    return false;
-}
-
-void pluralize(int num, char *word)
-{
-
-    bool status = check_ending(word, strlen(word));
-    printf("word: %s\n", word);
-
-    if ((num > 1 || num == 0) )/* && status == false) */
-    {
-        const char *s = "s";
-        strncat(word, s, 1);
-        printf("%d %s\n", num, word);
-    }
-/*     else if ((num > 1 || num == 0) && status == true)
-    {
-        printf("%d %s\n", num, word);
-    } */
-    else
-    {
-        printf("%d %s\n", num, word);
-    }
 }
 
 int main()
 {
     int num;
 
+    /* get the number */
     printf("Enter number: ");
     scanf("%d", &num);
 
+    /* get the word */
     char word[20];
     printf("Enter word: ");
     scanf("%s", word);
 
-    pluralize(num, word);
+    /* ptr to word */
+    char *ptr = word;
 
+    /* check the ending */
+    bool status = check_ending(ptr, strlen(ptr));
+
+    /* if theres no condtionals */
+    if (status == true) {
+        strcat(ptr, "s");
+    }
+
+    printf("%d %s\n", num, word);
     return 0;
 }
